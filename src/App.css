@@ -200,3 +200,15 @@ section .section-title {
     margin-bottom: 10px;
 }
 }
+.active{
+  border:  solid 3px rgb(115, 255, 1);
+}
+
+#content {
+  padding: 10px ;
+  border:  solid 3px red;
+}
+.mt-15{
+  margin-top: 15px;
+}
+
