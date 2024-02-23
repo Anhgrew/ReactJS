@@ -26,6 +26,7 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
+  GITHUB_ACTION_ROLE: arn:aws:iam::497913249056:role/github-action-role
   S3_BUCKET: anhgrew-s3-frontend
   DISTRIBUTION_ID: "E3632AOE2GVN8J"
   
@@ -98,7 +99,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: arn:aws:iam::497913249056:role/github-action-role
+          role-to-assume: ${{ env.GITHUB_ACTION_ROLE }}
           role-duration-seconds: 1200
           role-session-name: GitHubActions
           
