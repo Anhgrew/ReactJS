@@ -124,7 +124,10 @@ jobs:
         run: aws cloudfront create-invalidation --distribution-id ${{ env.DISTRIBUTION_ID }} --paths "/*"
 
       - name: Display CloudFront URL
-        run: echo "Your CloudFront distribution URL is: https://${{ env.CLOUDFRONT_URL }}"
+        run: printf "Your CloudFront distribution URL is https://%s\n" "${{ env.CLOUDFRONT_URL }}"
+
+
+
 
 
 
