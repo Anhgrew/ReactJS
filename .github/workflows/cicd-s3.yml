@@ -104,7 +104,7 @@ jobs:
           role-session-name: GitHubActions
           
       - name: Deploy to Amazon S3
-        run: aws s3 sync ./out s3://${{ env.S3_BUCKET}}/ --delete
+        run: aws s3 sync ./build s3://${{ env.S3_BUCKET}}/ --delete
         # Make sure the path './out' matches the output directory of your Next.js project
   
       - name: Invalidate CloudFront Distribution (optional)
