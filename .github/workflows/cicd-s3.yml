@@ -28,7 +28,9 @@ env:
   AWS_REGION: us-east-1
   GITHUB_ACTION_ROLE: arn:aws:iam::497913249056:role/github-action-role
   S3_BUCKET: anhgrew-s3-frontend
-  DISTRIBUTION_ID: "E3632AOE2GVN8J"
+  S3_BUCKET_BACKUP: anhgrew-backup
+  CLOUDFRONT_URL: d2ht4cfggmutd2.cloudfront.net  
+  DISTRIBUTION_ID: E3632AOE2GVN8J
   
 jobs:
   # Build job
@@ -103,10 +105,27 @@ jobs:
           role-duration-seconds: 1200
           role-session-name: GitHubActions
           
+      - name: Check if S3 bucket is not empty and backup old source
+        run: |
+          if aws s3 ls s3://${{ env.S3_BUCKET }}/ --recursive | grep -q '.*'; then
+            echo "Bucket is not empty, backing up..."
+            aws s3 sync s3://${{ env.S3_BUCKET }}/ s3://${{ env.S3_BUCKET_BACKUP }}/$(date +%Y-%m-%d-%H-%M-%S)/
+          else
+            echo "Bucket is empty, no backup needed."
+          fi
+        # Replace `S3_BUCKET_BACKUP` with your backup bucket name or a different path in the same bucket
+        # This command checks if the bucket is not empty before proceeding with the backup
+
       - name: Deploy to Amazon S3
-        run: aws s3 sync ./build s3://${{ env.S3_BUCKET}}/ --delete
-        # Make sure the path './out' matches the output directory of your Next.js project
+        run: aws s3 sync ./build/* s3://${{ env.S3_BUCKET }}/ --delete
+        # Make sure the path './build' matches the output directory of your project
   
       - name: Invalidate CloudFront Distribution (optional)
         run: aws cloudfront create-invalidation --distribution-id ${{ env.DISTRIBUTION_ID }} --paths "/*"
-        # Include this step if you're using AWS CloudFront in front of your S3 bucket
+
+      - name: Display CloudFront URL
+        run: echo "Your CloudFront distribution URL is: https://${{ env.CLOUDFRONT_URL }}"
+
+
+
+
