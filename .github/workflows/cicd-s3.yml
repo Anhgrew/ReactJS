@@ -44,17 +44,17 @@ jobs:
         id: detect-package-manager
         run: |
           if [ -f "${{ github.workspace }}/yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
+            printf "manager=yarn" >> $GITHUB_OUTPUT
+            printf "command=install" >> $GITHUB_OUTPUT
+            printf "runner=yarn" >> $GITHUB_OUTPUT
             exit 0
           elif [ -f "${{ github.workspace }}/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npm" >> $GITHUB_OUTPUT
+            printf "manager=npm" >> $GITHUB_OUTPUT
+            printf "command=ci" >> $GITHUB_OUTPUT
+            printf "runner=npm" >> $GITHUB_OUTPUT
             exit 0
           else
-            echo "Unable to determine package manager"
+            printf "Unable to determine package manager"
             exit 1
           fi
           
@@ -114,27 +114,19 @@ jobs:
       - name: Check if S3 bucket is not empty and backup old source
         run: |
           if aws s3 ls s3://${{ env.S3_BUCKET }}/ --recursive | grep -q '.*'; then
-            echo "Bucket is not empty, backing up..."
-            aws s3 sync s3://${{ env.S3_BUCKET }}/* s3://${{ env.S3_BUCKET_BACKUP }}/$(date +%Y-%m-%d-%H-%M-%S)/
+            printf "Bucket is not empty, backing up...\n"
+            aws s3 cp s3://${{ env.S3_BUCKET }} s3://${{ env.S3_BUCKET_BACKUP }}/site-access-backup-$(date +%Y-%m-%d-%H-%M-%S)/ --recursive
           else
-            echo "Bucket is empty, no backup needed."
+            printf "Bucket is empty, no backup needed.\n"
           fi
-        # Replace `S3_BUCKET_BACKUP` with your backup bucket name or a different path in the same bucket
-        # This command checks if the bucket is not empty before proceeding with the backup
-
+        # Note: Corrected the backup command to use recursive copy and removed the incorrect use of '/*' after the source bucket
+  
       - name: Deploy to Amazon S3
-        run: aws s3 sync ./build/* s3://${{ env.S3_BUCKET }}/ --delete
-        # Make sure the path './build' matches the output directory of your project
+        run: aws s3 sync ./build s3://${{ env.S3_BUCKET }}/ --delete
+        # Corrected the sync command to remove the wildcard usage
   
       - name: Invalidate CloudFront Distribution (optional)
         run: aws cloudfront create-invalidation --distribution-id ${{ env.DISTRIBUTION_ID }} --paths "/*"
-
+  
       - name: Display CloudFront URL
         run: printf "Your CloudFront distribution URL is https://%s\n" "${{ env.CLOUDFRONT_URL }}"
-
-
-
-
-
-
-
