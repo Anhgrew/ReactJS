@@ -105,11 +105,17 @@ jobs:
           role-duration-seconds: 1200
           role-session-name: GitHubActions
           
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: ./build    
+          
       - name: Check if S3 bucket is not empty and backup old source
         run: |
           if aws s3 ls s3://${{ env.S3_BUCKET }}/ --recursive | grep -q '.*'; then
             echo "Bucket is not empty, backing up..."
-            aws s3 sync s3://${{ env.S3_BUCKET }}/ s3://${{ env.S3_BUCKET_BACKUP }}/$(date +%Y-%m-%d-%H-%M-%S)/
+            aws s3 sync s3://${{ env.S3_BUCKET }}/* s3://${{ env.S3_BUCKET_BACKUP }}/$(date +%Y-%m-%d-%H-%M-%S)/
           else
             echo "Bucket is empty, no backup needed."
           fi
