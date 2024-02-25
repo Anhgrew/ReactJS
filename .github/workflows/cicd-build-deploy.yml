@@ -39,51 +39,7 @@ env:
   DISTRIBUTION_ID: E3632AOE2GVN8J
   
 jobs:
-  lint-and-test:
-    runs-on: ubuntu-latest 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Detect package manager
-        run: |
-          echo "PACKAGE_MANAGER=npm" >> $GITHUB_ENV
-          echo "PACKAGE_COMMAND=install" >> $GITHUB_ENV
-          echo "PACKAGE_RUNNER=npm" >> $GITHUB_ENV
-          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
-            echo "PACKAGE_MANAGER=yarn" >> $GITHUB_ENV
-            echo "PACKAGE_COMMAND=install" >> $GITHUB_ENV
-            echo "PACKAGE_RUNNER=yarn" >> $GITHUB_ENV
-          fi
-    
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.11.1"
-
-      - name: Enable corepack and set Yarn version if Yarn is used
-        if: ${{ env.PACKAGE_MANAGER }} == 'yarn'
-        run: |
-            corepack enable
-            ${{ env.PACKAGE_MANAGER }} set version canary
-          
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
-                
-      - name: Run lint command
-        run: ${{ env.PACKAGE_RUNNER }} run lint
-
-      # - name: Run unit test 
-      #   run: ${{ env.PACKAGE_RUNNER }} run test
-    
   build:
-    needs: lint-and-test
     runs-on: ubuntu-latest
     steps:
       - name: Wait for Lint and Test Status Check
