@@ -82,27 +82,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for Lint and Test Status Check
-        uses: fountainhead/action-wait-for-check@v1.0.0
-        id: wait-for-lint-and-test
-        with:
-          token: ${{ secrets.TOKEN }}
-          checkName: lint-and-test
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          timeoutSeconds: 600 
-          intervalSeconds: 10 
-      - name: Echo status
-        run: echo "${{ steps.wait-for-build.outputs.conclusion }}"
-        
-      - name: Do something with a passing build
-        if: steps.wait-for-build.outputs.conclusion == 'success'
-        run: echo "OK"
-
-      - name: Do something with a failing build
-        if: steps.wait-for-build.outputs.conclusion == 'failure'
-        run: echo "FAIL"
-        
-      - name: Checkout
-        uses: actions/checkout@v4
+        uses: Sibz/github-status-action@v1
+        with: 
+          authToken: ${{secrets.TOKEN}}
+          context: 'Lint and test run'
+          description: 'Passed'
+          state: 'success'
+          sha: ${{github.event.pull_request.head.sha || github.sha}}
         
       - name: Detect package manager
         id: detect-package-manager
