@@ -82,7 +82,7 @@ jobs:
         id: wait-for-lint-and-test
         with:
           token: ${{ secrets.TOKEN }}
-          checkName: 'Lint and Test'
+          checkName: 'status'
           ref: ${{ github.sha }}
           timeoutSeconds: 600 
           intervalSeconds: 10 
