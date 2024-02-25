@@ -74,8 +74,8 @@ jobs:
       # - name: Run lint command
       #   run: ${{ env.PACKAGE_RUNNER }} run lint
 
-      - name: Run unit test 
-        run: ${{ env.PACKAGE_RUNNER }} run test
+      # - name: Run unit test 
+      #   run: ${{ env.PACKAGE_RUNNER }} run test
 
       - name: Wait for Lint and Test Status Check
         uses: fountainhead/action-wait-for-check@v1.0.0
