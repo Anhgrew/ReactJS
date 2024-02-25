@@ -76,21 +76,26 @@ jobs:
 
       # - name: Run unit test 
       #   run: ${{ env.PACKAGE_RUNNER }} run test
-
+    
+  build:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    steps:
       - name: Wait for Lint and Test Status Check
         uses: fountainhead/action-wait-for-check@v1.0.0
         id: wait-for-lint-and-test
         with:
           token: ${{ secrets.TOKEN }}
-          checkName: 'status'
-          ref: ${{ github.sha }}
+          checkName: lint-and-test
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           timeoutSeconds: 600 
           intervalSeconds: 10 
-        
-  build:
-    needs: lint-and-test
-    runs-on: ubuntu-latest
-    steps:
+
+      - name: Do something with a passing build
+        if: steps.wait-for-build.outputs.conclusion == 'success'
+
+      - name: Do something with a failing build
+        if: steps.wait-for-build.outputs.conclusion == 'failure'
       - name: Checkout
         uses: actions/checkout@v4
         
