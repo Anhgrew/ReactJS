@@ -76,8 +76,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
                 
-      # - name: Run lint command
-      #   run: ${{ env.PACKAGE_RUNNER }} run lint
+      - name: Run lint command
+        run: ${{ env.PACKAGE_RUNNER }} run lint
 
       # - name: Run unit test 
       #   run: ${{ env.PACKAGE_RUNNER }} run test
