@@ -93,9 +93,12 @@ jobs:
 
       - name: Do something with a passing build
         if: steps.wait-for-build.outputs.conclusion == 'success'
+        run: echo "OK"
 
       - name: Do something with a failing build
         if: steps.wait-for-build.outputs.conclusion == 'failure'
+        run: echo "FAIL"
+        
       - name: Checkout
         uses: actions/checkout@v4
         
