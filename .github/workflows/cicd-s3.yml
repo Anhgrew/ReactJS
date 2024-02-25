@@ -90,7 +90,9 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           timeoutSeconds: 600 
           intervalSeconds: 10 
-
+      - name: Echo status
+        run: echo "${{ steps.wait-for-build.outputs.conclusion }}"
+        
       - name: Do something with a passing build
         if: steps.wait-for-build.outputs.conclusion == 'success'
         run: echo "OK"
