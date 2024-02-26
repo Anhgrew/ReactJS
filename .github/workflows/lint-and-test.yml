@@ -68,5 +68,13 @@ jobs:
         # run: ${{ env.PACKAGE_RUNNER }} run lint
         run: echo "Lint and test oke"
 
+      - name: Add commit status
+        uses: octodemo-resources/github-commit-status@v1
+        with:
+          context: unit_test_results
+          state: success
+          description: Tests passed
+          target_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
       # - name: Run unit test 
       #   run: ${{ env.PACKAGE_RUNNER }} run test
